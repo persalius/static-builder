@@ -5,11 +5,18 @@
   "scripts": {
     "dev": "node scripts/dev.js",
     "build": "node scripts/build.js",
-    "preview": "node scripts/preview.js"
+    "preview": "node scripts/preview.js",
+    "dev:direct": "node scripts/dev-direct.js",
+    "build:direct": "node scripts/build-direct.js",
+    "preview:direct": "node scripts/preview-direct.js",
+    "install:landing": "node scripts/install-landing-deps.js",
+    "setup": "npm run install:landing",
+    "deploy": "npm run install:landing && npm run build:direct"
   },
   "dependencies": {
     "cheerio": "^1.0.0",
     "dotenv": "^16.6.1",
-    "vite": "^5.0.0"
+    "sass": "^1.93.2",
+    "vite": "^7.1.9"
   }
 }

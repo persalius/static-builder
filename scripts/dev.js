@@ -16,7 +16,9 @@ async function startDev() {
       process.exit(1);
     }
 
-    // Создаем dev сервер с настройками из .env
+    console.log("🚀 Starting dev server...");
+
+    // Создаем dev сервер
     const server = await createServer(viteConfig);
 
     await server.listen();
