@@ -2,7 +2,7 @@ import { defineConfig } from "vite";
 import path from "path";
 import fs from "fs";
 import { paths } from "./paths.js";
-import plugins from "./plugins/index.js";
+import plugins from "../plugins/index.js";
 
 function getHtmlInputs(rootDir) {
   const files = fs.readdirSync(rootDir).filter((f) => f.endsWith(".html"));

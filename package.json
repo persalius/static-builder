@@ -3,15 +3,9 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "node scripts/dev.js",
-    "build": "node scripts/build.js",
-    "preview": "node scripts/preview.js",
-    "dev:direct": "node scripts/dev-direct.js",
-    "build:direct": "node scripts/build-direct.js",
-    "preview:direct": "node scripts/preview-direct.js",
-    "install:landing": "node scripts/install-landing-deps.js",
-    "setup": "npm run install:landing",
-    "deploy": "npm run install:landing && npm run build:direct"
+    "dev": "node src/scripts/dev.js",
+    "build": "node src/scripts/build.js",
+    "preview": "node src/scripts/preview.js"
   },
   "dependencies": {
     "cheerio": "^1.0.0",

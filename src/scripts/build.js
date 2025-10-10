@@ -1,11 +1,11 @@
 import { build } from "vite";
-import { paths } from "../paths.js";
-import viteConfig from "../vite.config.js";
+import { paths } from "../config/paths.js";
+import viteConfig from "../config/vite.config.js";
 import fs from "fs";
+import { ensureDependencies } from "../utils/dependencies.js";
 
 async function buildProject() {
   try {
-    // Проверяем существование необходимых папок
     if (!fs.existsSync(paths.landingPage)) {
       console.error(`❌ Landing page not found: ${paths.landingPage}`);
       process.exit(1);
@@ -16,7 +16,9 @@ async function buildProject() {
       process.exit(1);
     }
 
-    // Запускаем сборку
+    ensureDependencies();
+
+    console.log("🚀 Starting build...");
     await build(viteConfig);
     console.log("✅ Build completed successfully!");
   } catch (error) {

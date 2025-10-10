@@ -1,11 +1,11 @@
 import { createServer } from "vite";
 import fs from "fs";
-import { paths } from "../paths.js";
-import viteConfig from "../vite.config.js";
+import { paths } from "../config/paths.js";
+import viteConfig from "../config/vite.config.js";
+import { ensureDependencies } from "../utils/dependencies.js";
 
 async function startDev() {
   try {
-    // Проверяем существование необходимых папок
     if (!fs.existsSync(paths.landingPage)) {
       console.error(`❌ Landing page not found: ${paths.landingPage}`);
       process.exit(1);
@@ -16,15 +16,13 @@ async function startDev() {
       process.exit(1);
     }
 
+    ensureDependencies();
+
     console.log("🚀 Starting dev server...");
-
-    // Создаем dev сервер
     const server = await createServer(viteConfig);
-
     await server.listen();
-
     server.printUrls();
-    console.log("🚀 Landing builder dev server started!");
+    console.log("✅ Landing builder dev server started!");
   } catch (error) {
     console.error("❌ Failed to start dev server:", error);
     process.exit(1);
