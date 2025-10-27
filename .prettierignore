@@ -1,0 +1,8 @@
+dist
+build
+.env
+**/*.lock
+**/.git
+**/node_modules
+**/.prettierrc
+**/.prettierignore
