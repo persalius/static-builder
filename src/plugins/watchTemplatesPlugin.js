@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { paths } from "../config/paths.js";
-import { templateConfigPath } from "../constants/templates.js";
+import { templateConfigFile } from "../constants/templates.js";
 
 export const watchTemplatesPlugin = (context) => {
   return {
@@ -19,7 +19,7 @@ export const watchTemplatesPlugin = (context) => {
           const jsonPath = path.join(
             paths.templates,
             folderName,
-            templateConfigPath
+            templateConfigFile
           );
           if (fs.existsSync(jsonPath)) {
             const { name } = JSON.parse(fs.readFileSync(jsonPath, "utf-8"));

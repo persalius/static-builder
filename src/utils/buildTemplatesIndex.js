@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import { templateConfigFile } from "../constants/templates.js";
 
 export const buildTemplatesIndex = (dir) => {
   const index = new Map();
@@ -14,7 +15,7 @@ export const buildTemplatesIndex = (dir) => {
     .filter((d) => d.isDirectory());
 
   folders.forEach((folder) => {
-    const jsonPath = path.join(dir, folder.name, "template.json");
+    const jsonPath = path.join(dir, folder.name, templateConfigFile);
     if (!fs.existsSync(jsonPath)) return;
 
     const { name } = JSON.parse(fs.readFileSync(jsonPath, "utf-8"));

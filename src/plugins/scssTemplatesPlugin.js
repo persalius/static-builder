@@ -4,7 +4,7 @@ import {
   virtualScssId,
   virtualScssImport,
   mainJsPath,
-  templateConfigPath,
+  templateConfigFile,
 } from "../constants/templates.js";
 
 export const scssTemplatesPlugin = (context) => {
@@ -35,7 +35,7 @@ export const scssTemplatesPlugin = (context) => {
 
             const templateJsonPath = path.join(
               templatePath,
-              templateConfigPath
+              templateConfigFile
             );
             if (!fs.existsSync(templateJsonPath)) return null;
 

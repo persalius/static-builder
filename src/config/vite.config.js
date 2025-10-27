@@ -7,7 +7,7 @@ import plugins from "../plugins/index.js";
 function getHtmlInputs(rootDir) {
   const files = fs.readdirSync(rootDir).filter((f) => f.endsWith(".html"));
 
-  // Исключаем файлы, начинающиеся с "_"
+  // Исключаем html файлы, начинающиеся с "_"
   const htmlFiles = files.filter((f) => !f.startsWith("_"));
 
   const inputs = {};
@@ -20,19 +20,12 @@ function getHtmlInputs(rootDir) {
 }
 
 export default defineConfig({
-  // Устанавливаем root в папку landing page
   root: paths.landingPage,
-
-  // Подключаем плагины
-  plugins: [...plugins],
-
-  // Настройки сборки
+  plugins,
   build: {
-    // Выходная папка относительно корня проекта landing-builder
     outDir: path.resolve(paths.builderRoot, "dist"),
-    // Очищать папку при каждой сборке
     emptyOutDir: true,
-    // Настройки Rollup для множественных HTML точек входа
+    // Rollup settings for multiple HTML entry points
     rollupOptions: {
       input: getHtmlInputs(paths.landingPage),
     },

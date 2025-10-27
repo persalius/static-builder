@@ -1,7 +1,7 @@
 import path from "path";
 import fs from "fs";
 import { paths } from "../config/paths.js";
-import { templateConfigPath } from "../constants/templates.js";
+import { templateConfigFile } from "../constants/templates.js";
 
 export const jsTemplatePlugin = (context) => {
   return {
@@ -21,7 +21,7 @@ export const jsTemplatePlugin = (context) => {
         const templatePath = context.getTemplatePath(templateName);
         if (!templatePath) continue;
 
-        const jsonPath = path.join(templatePath, templateConfigPath);
+        const jsonPath = path.join(templatePath, templateConfigFile);
         if (!fs.existsSync(jsonPath)) continue;
 
         try {
@@ -39,7 +39,7 @@ export const jsTemplatePlugin = (context) => {
           });
         } catch (error) {
           console.warn(
-            `Error reading ${templateConfigPath} for ${templateName}:`,
+            `Error reading ${templateConfigFile} for ${templateName}:`,
             error.message
           );
         }
@@ -69,7 +69,7 @@ export const jsTemplatePlugin = (context) => {
         const templatePath = context.getTemplatePath(templateName);
         if (!templatePath) return next();
 
-        const templateJsonPath = path.join(templatePath, templateConfigPath);
+        const templateJsonPath = path.join(templatePath, templateConfigFile);
         try {
           await fs.promises.access(templateJsonPath);
           const templateConfig = JSON.parse(

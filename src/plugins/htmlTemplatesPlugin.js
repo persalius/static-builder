@@ -3,7 +3,7 @@ import path from "path";
 import * as cheerio from "cheerio";
 import {
   attributeTemplateName,
-  templateConfigPath,
+  templateConfigFile,
 } from "../constants/templates.js";
 
 export const htmlTemplatesPlugin = (context) => {
@@ -41,7 +41,7 @@ export const htmlTemplatesPlugin = (context) => {
         const templatePath = context.getTemplatePath(templateName);
         if (!templatePath) return;
 
-        const templateJsonPath = path.join(templatePath, templateConfigPath);
+        const templateJsonPath = path.join(templatePath, templateConfigFile);
         if (!fs.existsSync(templateJsonPath)) return;
 
         const templateConfig = JSON.parse(
