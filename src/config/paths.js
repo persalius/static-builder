@@ -24,4 +24,5 @@ export const paths = {
   dist: path.resolve(projectRoot, "./dist"),
   viteConfig: path.resolve(projectRoot, "./vite.config.js"),
   plugins: path.resolve(projectRoot, "./src/plugins"),
+  appConfig: path.resolve(projectRoot, "./app/config.json"),
 };

@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 import * as cheerio from "cheerio";
 import { paths } from "../config/paths.js";
-import { virtualScssId } from "../constants/templates.js";
+import { attributeTemplateName, virtualScssId } from "../constants/templates.js";
 
 const fileTemplatesCache = new Map();
 
@@ -11,7 +11,7 @@ export const scanSingleHtmlFile = (htmlPath) => {
   try {
     const htmlContent = fs.readFileSync(htmlPath, "utf-8");
     const $ = cheerio.load(htmlContent);
-    $("div.template[data-template]").each((_, el) => {
+    $(`[${attributeTemplateName}]`).each((_, el) => {
       const templateName = $(el).attr("data-template");
       if (templateName) templates.add(templateName);
     });
