@@ -3,9 +3,11 @@ import globals from "globals";
 import tsEslintPlugin from "@typescript-eslint/eslint-plugin";
 
 export default [
+  {
+    ignores: ["dist/", "build/", "node_modules/"],
+  },
   js.configs.recommended,
   {
-    ignores: ["dist/", "node_modules/", "*.config.js"],
     files: ["**/*.js"],
     languageOptions: {
       globals: {
@@ -24,12 +26,10 @@ export default [
     },
   },
   {
-    // Добавляем TypeScript
     files: ["**/*.ts"],
     languageOptions: {
       parser: "@typescript-eslint/parser",
       parserOptions: {
-        project: "./tsconfig.json",
         sourceType: "module",
         ecmaVersion: 2022,
       },
