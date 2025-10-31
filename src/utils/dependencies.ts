@@ -1,5 +1,5 @@
 import { execSync } from "child_process";
-import { paths } from "../config/paths.js";
+import { paths } from "@/config/paths.js";
 import fs from "fs";
 import path from "path";
 
@@ -25,7 +25,8 @@ export const installDependencies = () => {
     });
     console.log("✅ Dependencies installed successfully!");
   } catch (error) {
-    console.error("❌ Failed to install dependencies:", error.message);
+    const message = error instanceof Error ? error.message : String(error);
+    console.error("❌ Failed to install dependencies:", message);
     process.exit(1);
   }
 };

@@ -5,7 +5,7 @@ import { htmlTemplatesPlugin } from "./htmlTemplatesPlugin.js";
 import { scssTemplatesPlugin } from "./scssTemplatesPlugin.js";
 import { jsTemplatePlugin } from "./jsTemplatePlugin.js";
 
-const context = new TemplatesContext();
+const context: TemplatesContext = new TemplatesContext();
 
 export default [
   templatesTrackingPlugin(context),

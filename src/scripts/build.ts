@@ -1,8 +1,8 @@
 import { build } from "vite";
-import { paths } from "../config/paths.js";
-import viteConfig from "../config/vite.config.js";
 import fs from "fs";
-import { ensureDependencies } from "../utils/dependencies.js";
+import { paths } from "@/config/paths.js";
+import viteConfig from "@/config/vite.config.js";
+import { ensureDependencies } from "@/utils/dependencies.js";
 
 async function buildProject() {
   try {

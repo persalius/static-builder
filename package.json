@@ -3,12 +3,17 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "node src/scripts/dev.js",
-    "build": "node src/scripts/build.js",
-    "preview": "node src/scripts/preview.js",
+    "dev": "tsx src/scripts/dev.ts",
+    "build": "tsx src/scripts/build.ts",
+    "preview": "tsx src/scripts/preview.ts",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "prepare": "simple-git-hooks"
+    "prepare": "simple-git-hooks",
+    "clean:build-app": "tsx src/scripts/build-app/clean-build.ts",
+    "copy-files:build-app": "tsx src/scripts/build-app/copy-files.ts",
+    "remove-empty-folders:build-app": "tsx src/scripts/build-app/remove-empty-folders.ts",
+    "webcontainer:export": "tsx src/scripts/build-app/export-webcontainer-structure.ts",
+    "build:app": "npm run clean:build-app && tsc && tsc-alias && npm run copy-files:build-app && npm run remove-empty-folders:build-app && npm run webcontainer:export"
   },
   "simple-git-hooks": {
     "pre-commit": "npx lint-staged"
@@ -23,15 +28,21 @@
     "cheerio": "^1.0.0",
     "dotenv": "^16.6.1",
     "sass": "^1.93.2",
-    "vite": "^7.1.9"
+    "vite": "^7.1.12"
   },
   "devDependencies": {
+    "@types/node": "^24.9.2",
+    "@typescript-eslint/eslint-plugin": "^8.46.2",
+    "@typescript-eslint/parser": "^8.46.2",
     "eslint": "^9.38.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^5.5.4",
     "lint-staged": "^16.2.6",
     "prettier": "^3.6.2",
-    "simple-git-hooks": "^2.13.1"
+    "simple-git-hooks": "^2.13.1",
+    "tsc-alias": "^1.8.16",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
   }
 }

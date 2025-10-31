@@ -1,12 +1,14 @@
 import fs from "fs";
 import path from "path";
 import * as cheerio from "cheerio";
-import { paths } from "../config/paths.js";
-import { attributeTemplateName, virtualScssId } from "../constants/templates.js";
+import type { Plugin } from "vite";
+import { paths } from "@/config/paths.js";
+import { attributeTemplateName, virtualScssId } from "@/constants/templates.js";
+import { TemplatesContext } from "./context.js";
 
 const fileTemplatesCache = new Map();
 
-export const scanSingleHtmlFile = (htmlPath) => {
+export const scanSingleHtmlFile = (htmlPath: string) => {
   const templates = new Set();
   try {
     const htmlContent = fs.readFileSync(htmlPath, "utf-8");
@@ -16,15 +18,16 @@ export const scanSingleHtmlFile = (htmlPath) => {
       if (templateName) templates.add(templateName);
     });
   } catch (error) {
-    console.warn("Error scanning HTML file:", error.message);
+    const message = error instanceof Error ? error.message : String(error);
+    console.warn("Error scanning HTML file:", message);
   }
   return templates;
 };
 
-export const getAllCacheTemplates = () =>
+export const getAllCacheTemplates = (): Set<string> =>
   new Set([...fileTemplatesCache.values()].flatMap((set) => [...set]));
 
-export const templatesTrackingPlugin = (context) => {
+export const templatesTrackingPlugin = (context: TemplatesContext): Plugin => {
   return {
     name: "templates-tracking-plugin",
     enforce: "pre",

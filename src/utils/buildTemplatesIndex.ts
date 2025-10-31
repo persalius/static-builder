@@ -1,18 +1,16 @@
 import fs from "fs";
 import path from "path";
-import { templateConfigFile } from "../constants/templates.js";
+import { templateConfigFile } from "@/constants/templates.js";
 
-export const buildTemplatesIndex = (dir) => {
-  const index = new Map();
+export const buildTemplatesIndex = (dir: string) => {
+  const index = new Map<string, string>();
 
   if (!fs.existsSync(dir)) {
     console.warn(`Templates directory not found: ${dir}`);
     return index;
   }
 
-  const folders = fs
-    .readdirSync(dir, { withFileTypes: true })
-    .filter((d) => d.isDirectory());
+  const folders = fs.readdirSync(dir, { withFileTypes: true }).filter((d) => d.isDirectory());
 
   folders.forEach((folder) => {
     const jsonPath = path.join(dir, folder.name, templateConfigFile);

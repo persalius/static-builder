@@ -1,10 +1,18 @@
 import fs from "fs";
 import path from "path";
+import type { Plugin } from "vite";
 import * as cheerio from "cheerio";
-import { attributeTemplateName, templateConfigFile } from "../constants/templates.js";
-import { paths } from "../config/paths.js";
+import { paths } from "@/config/paths.js";
+import { attributeTemplateName, templateConfigFile } from "@/constants/templates.js";
+import { TemplateConfig } from "@/types/template.js";
+import { TemplatesContext } from "./context.js";
 
-export const htmlTemplatesPlugin = (context) => {
+type ContainerType = "head" | "body";
+type ScriptsMap = {
+  [key in ContainerType]: { start: string[]; end: string[] };
+} & { comment: Record<string, string> };
+
+export const htmlTemplatesPlugin = (context: TemplatesContext): Plugin => {
   let isProduction = false;
   const bundleInfo = new Map(); // пути к скриптам из templates в dist папке
 
@@ -12,7 +20,7 @@ export const htmlTemplatesPlugin = (context) => {
     name: "html-template-plugin",
     enforce: "pre",
 
-    configResolved(config) {
+    configResolved(config: any) {
       isProduction = config.command === "build";
     },
 
@@ -20,10 +28,7 @@ export const htmlTemplatesPlugin = (context) => {
       // Необходимо для сбора JS файлов из templates
       // Собираем информацию о сгенерированных файлах
       Object.entries(bundle).forEach(([fileName, chunk]) => {
-        if (
-          chunk.type === "chunk" &&
-          (fileName.includes("templates/") || fileName.includes("/custom"))
-        ) {
+        if (chunk.type === "chunk" && fileName.includes("templates/")) {
           const originalPath = chunk.facadeModuleId;
           if (originalPath) {
             bundleInfo.set(originalPath, fileName);
@@ -32,10 +37,10 @@ export const htmlTemplatesPlugin = (context) => {
       });
     },
 
-    transformIndexHtml(html) {
+    transformIndexHtml(html: string) {
       const $ = cheerio.load(html);
 
-      const scriptsMap = {
+      const scriptsMap: ScriptsMap = {
         head: { start: [], end: [] },
         body: { start: [], end: [] },
         comment: {},
@@ -50,7 +55,9 @@ export const htmlTemplatesPlugin = (context) => {
         const templateJsonPath = path.join(templatePath, templateConfigFile);
         if (!fs.existsSync(templateJsonPath)) return;
 
-        const templateConfig = JSON.parse(fs.readFileSync(templateJsonPath, "utf-8"));
+        const templateConfig: TemplateConfig = JSON.parse(
+          fs.readFileSync(templateJsonPath, "utf-8"),
+        );
 
         // HTML
         const templateHtmlPath = path.join(templatePath, templateConfig.entry);
@@ -58,12 +65,14 @@ export const htmlTemplatesPlugin = (context) => {
           let templateHtml = fs.readFileSync(templateHtmlPath, "utf-8");
 
           const attrs = $(el).attr();
-          Object.keys(attrs).forEach((key) => {
-            if (key === attributeTemplateName) return;
-            const cleanKey = key.startsWith("data-") ? key.slice(5) : key;
-            const regex = new RegExp(`{{\\s*${cleanKey}\\s*}}`, "g");
-            templateHtml = templateHtml.replace(regex, attrs[key]);
-          });
+          if (attrs) {
+            Object.keys(attrs).forEach((key) => {
+              if (key === attributeTemplateName) return;
+              const cleanKey = key.startsWith("data-") ? key.slice(5) : key;
+              const regex = new RegExp(`{{\\s*${cleanKey}\\s*}}`, "g");
+              templateHtml = templateHtml.replace(regex, attrs[key]);
+            });
+          }
 
           $(el).replaceWith(templateHtml);
         }
@@ -138,20 +147,21 @@ export const htmlTemplatesPlugin = (context) => {
       }
 
       if (gtmId) {
-        let gtmScriptSrc = "";
-        if (isProduction) {
-          const gtmEntry = [...bundleInfo.entries()].find(([key]) => key.includes("gtm.js"));
-          const gtmScriptTag = gtmEntry ? gtmEntry[1] : "";
-          if (gtmScriptTag) {
-            gtmScriptSrc = `/${gtmScriptTag}`;
-          }
-        } else {
-          gtmScriptSrc = "/custom/gtm.js";
-        }
+        // gtm script
+        const gtmRawPath = path.resolve(process.cwd(), "src/custom-landing-scripts/gtm.js");
+        const gtmRawScript = fs.readFileSync(gtmRawPath, "utf-8").replace(/{{gtmId}}/g, gtmId);
+        $("head").prepend(`<script>${gtmRawScript}</script>`);
 
-        if (gtmScriptSrc) {
-          $("head").prepend(`<script src="${gtmScriptSrc}"></script>`);
-          const noscriptHtml = `
+        // gtm consent script
+        const gtmConsentRawPath = path.resolve(
+          process.cwd(),
+          "src/custom-landing-scripts/gtm-consent.js",
+        );
+        const gtmConsentRawScript = fs.readFileSync(gtmConsentRawPath, "utf-8");
+        $("head").prepend(`<script>${gtmConsentRawScript}</script>`);
+
+        // gtm noscript
+        const noscriptHtml = `
             <noscript>
               <iframe
                 src="https://www.googletagmanager.com/ns.html?id=${gtmId}"
@@ -160,14 +170,10 @@ export const htmlTemplatesPlugin = (context) => {
                 style="display:none;visibility:hidden"
               ></iframe>
             </noscript>
-          `;
-
-          $("body").prepend(noscriptHtml);
-          // ToDo. Это под вопросов. Нужно ли добавлять этот скрипт в html.
-          $("body").append(
-            "<script src='https://cookies.volsor.com/consent-manager/index.js'></script>",
-          );
-        }
+        `;
+        $("body").prepend(noscriptHtml);
+        // cookie banner
+        $("body").append("<script src='https://cookies.volsor.com/index.js'></script>");
       }
 
       return $.html();

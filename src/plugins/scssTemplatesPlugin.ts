@@ -1,13 +1,16 @@
 import path from "path";
 import fs from "fs";
+import type { Plugin } from "vite";
 import {
   virtualScssId,
   virtualScssImport,
   mainJsPath,
   templateConfigFile,
-} from "../constants/templates.js";
+} from "@/constants/templates.js";
+import { TemplateConfig } from "@/types/template.js";
+import { TemplatesContext } from "./context.js";
 
-export const scssTemplatesPlugin = (context) => {
+export const scssTemplatesPlugin = (context: TemplatesContext): Plugin => {
   return {
     name: "scss-templates",
     enforce: "post",
@@ -33,24 +36,20 @@ export const scssTemplatesPlugin = (context) => {
             const templatePath = context.getTemplatePath(templateName);
             if (!templatePath) return null;
 
-            const templateJsonPath = path.join(
-              templatePath,
-              templateConfigFile
-            );
+            const templateJsonPath = path.join(templatePath, templateConfigFile);
             if (!fs.existsSync(templateJsonPath)) return null;
 
-            const { styles } = JSON.parse(
-              fs.readFileSync(templateJsonPath, "utf-8")
+            const templateConfig: TemplateConfig = JSON.parse(
+              fs.readFileSync(templateJsonPath, "utf-8"),
             );
-            if (!styles.length) return null;
+            const { styles } = templateConfig;
+            if (!styles?.length) return null;
 
             // Подключаем каждый SCSS с templateName как namespace
             return styles
               .map((file) => {
                 const abs = path.join(templatePath, file);
-                const rel = path
-                  .relative(process.cwd(), abs)
-                  .replace(/\\/g, "/");
+                const rel = path.relative(process.cwd(), abs).replace(/\\/g, "/");
                 return `@use "${rel}" as ${templateName};`;
               })
               .join("\n");

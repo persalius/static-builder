@@ -1,7 +1,7 @@
 import { preview } from "vite";
-import { paths } from "../config/paths.js";
-import viteConfig from "../config/vite.config.js";
 import fs from "fs";
+import { paths } from "@/config/paths.js";
+import viteConfig from "@/config/vite.config.js";
 
 async function startPreview() {
   try {

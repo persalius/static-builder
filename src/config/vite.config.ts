@@ -2,15 +2,17 @@ import { defineConfig } from "vite";
 import path from "path";
 import fs from "fs";
 import { paths } from "./paths.js";
-import plugins from "../plugins/index.js";
+import plugins from "@/plugins/index.js";
 
-function getHtmlInputs(rootDir) {
+type HtmlInputs = { [name: string]: string };
+
+function getHtmlInputs(rootDir: string) {
   const files = fs.readdirSync(rootDir).filter((f) => f.endsWith(".html"));
 
   // Исключаем html файлы, начинающиеся с "_"
   const htmlFiles = files.filter((f) => !f.startsWith("_"));
 
-  const inputs = {};
+  const inputs: HtmlInputs = {};
   htmlFiles.forEach((file) => {
     const name = path.basename(file, ".html");
     inputs[name] = path.resolve(rootDir, file);
@@ -28,13 +30,6 @@ export default defineConfig({
     // Rollup settings for multiple HTML entry points
     rollupOptions: {
       input: getHtmlInputs(paths.landingPage),
-    },
-  },
-  css: {
-    preprocessorOptions: {
-      scss: {
-        api: "modern-compiler",
-      },
     },
   },
 });
